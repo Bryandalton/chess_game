@@ -30,7 +30,7 @@ captured_white= []
 captured_black= []
 # 0 - whites turn no selection: 1-whites turn piece selected: 2- black turn no selection, 3 - black turn piece selected
 turn_step = 0
-selection= 100
+selection= 10
 valid_moves= []
 
 # load in game piece images (queen, king, rook, bishop, knight, pawn) x 2
@@ -79,17 +79,57 @@ small_black_images = [black_pawn_small, black_queen_small, black_king_small, bla
 piece_list = ['pawn', 'queen', 'king', 'knight', 'rook', 'bishop']
 
 # check variables/ flashing counter
-counter = 0
-winner = ''
-game_over = False
+
 
 #draw main game board
+def draw_board():
+    for i in range(32):
+        column = i % 4
+        row = i // 4
+        if row % 2 == 0:
+            pygame.draw.rect(screen, 'light gray', [600 - (column * 200), row * 100, 100, 100])
+        else:
+            pygame.draw.rect(screen, 'light gray', [700 - (column * 200), row * 100, 100, 100])
+        pygame.draw.rect(screen, 'gray',[0,800,WIDTH,100])
+        pygame.draw.rect(screen, 'gold',[0,800,WIDTH,100], 5)
+        pygame.draw.rect(screen, 'gold',[800,0,200,HEIGHT], 5)
+        status_text= ['White: Select a piece', 'White: Select a destination', 
+                     'Black: Select a piece', 'Black: Select a destination' ]
+        screen.blit(big_font.render(status_text[turn_step], True, 'black'), (20, 820))
+        for i in range(9):
+            pygame.draw.line(screen, 'black',(0, 100 * i),(800, 100 * i), 2)
+            pygame.draw.line(screen, 'black',(100 * i, 0),(100 * i, 800), 2)
+
+#draw pieces on board
+def draw_pieces():
+    for i in range(len(white_pieces)):
+        index = piece_list.index(white_pieces[i])
+        if white_pieces[i] == 'pawn':
+            screen.blit(white_pawn, (white_locations[i][0]*100 +22, white_locations[i][1] * 100 + 30))
+        else:
+            screen.blit(white_images[index], (white_locations[i][0]*100 + 10, white_locations[i][1] * 100 + 10))
+        if turn_step < 2:
+            if selection == i:
+                pygame.draw.rect(screen, 'red', (white_locations[i][0] * 100 + 1, white_locations[i][1] * 100 + 1, 100, 100), 2)
+
+    for i in range(len(black_pieces)):
+        index = piece_list.index(black_pieces[i])
+        if black_pieces[i] == 'pawn':
+            screen.blit(black_pawn, (black_locations[i][0]*100 +22, black_locations[i][1] * 100 + 30))
+        else:
+            screen.blit(black_images[index], (black_locations[i][0]*100 + 10, black_locations[i][1] * 100 + 10))
+        if turn_step >= 2:
+            if selection == i:
+                pygame.draw.rect(screen, 'blue', (black_locations[i][0] * 100 + 1, black_locations[i][1] * 100 + 1, 100, 100), 2)
+
 
 #main loop
 run = True
 while run:
     timer.tick(fps)
     screen.fill('dark gray')
+    draw_board()
+    draw_pieces()
     pygame.display.set_caption('Two Player Pygame Chess!')
 
     #event handling
