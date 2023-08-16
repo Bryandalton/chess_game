@@ -22,7 +22,6 @@ white_locations = [(0,0),(1,0),(2,0),(3,0),(4,0),(5,0),(6,0),(7,0),
 
 black_pieces = ['rook','knight','bishop', 'king', 'queen', 'bishop','knight', 'rook',
                'pawn','pawn','pawn','pawn','pawn','pawn','pawn','pawn']
-
 black_locations= [(0,7),(1,7),(2,7),(3,7),(4,7),(5,7),(6,7),(7,7),
                    (0,6),(1,6),(2,6),(3,6),(4,6),(5,6),(6,6),(7,6)]
 
@@ -126,23 +125,60 @@ def draw_pieces():
 def check_options(pieces, locations, turn):
     moves_list= []
     all_moves_list = []
-    for i in range((pieces)):
+    for i in range((len(pieces))):
         location = locations[i]
         piece = pieces[i]
         if piece == 'pawn':
             moves_list= check_pawn(location, turn)
         elif piece == 'rook':
             moves_list = check_rook(location, turn)
-        elif piece == 'knight':
-            moves_list = check_knight(location, turn)
-        elif piece == 'bishop':
-            moves_list = check_bishop(location, turn)
-        elif piece == 'king':
-            moves_list = check_king(location, turn)
-        elif piece == 'queen':
-            moves_list = check_queen(location, turn)
+        # elif piece == 'knight':
+        #     moves_list = check_knight(location, turn)
+        # elif piece == 'bishop':
+        #     moves_list = check_bishop(location, turn)
+        # elif piece == 'king':
+        #     moves_list = check_king(location, turn)
+        # elif piece == 'queen':
+        #     moves_list = check_queen(location, turn)
         all_moves_list.append(moves_list)
     return all_moves_list
+
+#check rook moves
+def check_rook(position, color):
+    moves_list = []
+    if color == 'white':
+        enemies_list = black_locations
+        friends_list = white_locations
+    else:
+        enemies_list = white_locations
+        friends_list = black_locations
+    for i in range(4): #up down right left
+        path = True
+        chain = 1
+        if i == 0:
+            x = 0
+            y = 1
+        elif i == 1:
+            x = 0
+            y = -1
+        elif i == 2:
+            x = 1
+            y = 0
+        else:
+            x = -1
+            y = 0
+
+        while path: 
+          if (position[0] + (chain * x), position[1] + (chain * y)) not in friends_list and \
+                    0 <= position[0] + (chain * x) <= 7 and 0 <= position[1] + (chain * y) <= 7:
+                moves_list.append((position[0] + (chain * x), position[1] + (chain * y)))
+                if (position[0] + (chain * x), position[1] + (chain * y)) in enemies_list:
+                    path = False
+                chain += 1
+          else:
+            path = False
+
+    return moves_list
 
 #check valid pawn moves
 def check_pawn(position, color):
@@ -171,13 +207,40 @@ def check_pawn(position, color):
             moves_list.append((position[0] - 1, position[1] - 1))
     return moves_list
 
+#draw valid move for just selected piece
+def check_valid_moves():
+    if turn_step < 2:
+        options_list= white_options
+    else:
+        options_list= black_options
+    valid_options= options_list[selection]
+    return valid_options
+
+#draw valid moves on screen
+def draw_valid(moves):
+    if turn_step < 2:
+        color = 'red'
+    else:
+        color = 'blue'
+    for i in range(len(moves)):
+        pygame.draw.circle(screen, color, (moves[i][0] * 100 + 50, moves[i][1] * 100 + 50), 5)
+
+#draw captured pieces on side of screen
+
 #main loop
+
+black_options = check_options(black_pieces, black_locations, 'black') 
+
+white_options = check_options(white_pieces, white_locations, 'white')
 run = True
 while run:
     timer.tick(fps)
     screen.fill('dark gray')
     draw_board()
     draw_pieces()
+    if selection != 100:
+        valid_moves = check_valid_moves()
+        draw_valid(valid_moves)
     pygame.display.set_caption('Two Player Pygame Chess!')
 
     #event handling
