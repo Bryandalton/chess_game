@@ -78,7 +78,9 @@ small_black_images = [black_pawn_small, black_queen_small, black_king_small, bla
 piece_list = ['pawn', 'queen', 'king', 'knight', 'rook', 'bishop']
 
 # check variables/ flashing counter
-
+counter = 0
+winner = ''
+game_over = False
 
 #draw main game board
 def draw_board():
@@ -318,18 +320,41 @@ def draw_captured():
         screen.blit(small_white_images[index], (925, 5 + 50 * i))
     pass
 
+#draw flashing square around king if in check
+def draw_check():
+    if turn_step < 2:
+        if 'king' in white_pieces:
+            king_index = white_pieces.index('king')
+            king_location= white_locations[king_index]
+            for i in range(len(black_options)):
+                if king_location in black_options[i]:
+                    if counter < 15:
+                        pygame.draw.rect(screen, 'dark red',[white_locations[king_index][0] * 100 + 1,
+                                                             white_locations[king_index][1] * 100 + 1, 100, 100], 5)
+    else:
+        if 'king' in black_pieces:
+            king_index = black_pieces.index('king')
+            king_location= black_locations[king_index]
+            for i in range(len(white_options)):
+                if king_location in white_options[i]:
+                    if counter < 15:
+                        pygame.draw.rect(screen, 'dark blue',[black_locations[king_index][0] * 100 + 1,
+                                                              black_locations[king_index][1] * 100 + 1, 100, 100], 5)
 #main loop
-
 black_options = check_options(black_pieces, black_locations, 'black') 
-
-white_options = check_options(white_pieces, white_locations, 'white')
+white_options = check_options(white_pieces, white_locations, 'white') 
 run = True
 while run:
     timer.tick(fps)
+    if counter < 30:
+        counter += 1
+    else:
+        counter = 0 
     screen.fill('dark gray')
     draw_board()
     draw_pieces()
     draw_captured()
+    draw_check()
     if selection != 100:
         valid_moves = check_valid_moves()
         draw_valid(valid_moves)
