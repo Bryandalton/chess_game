@@ -136,8 +136,8 @@ def check_options(pieces, locations, turn):
             moves_list = check_knight(location, turn)
         elif piece == 'bishop':
             moves_list = check_bishop(location, turn)
-        # elif piece == 'king':
-        #     moves_list = check_king(location, turn)
+        elif piece == 'king':
+            moves_list = check_king(location, turn)
         elif piece == 'queen':
             moves_list = check_queen(location, turn)
         all_moves_list.append(moves_list)
@@ -271,7 +271,13 @@ def check_king(position, color):
     else:
         enemies_list = white_locations
         friends_list = black_locations
-    pass
+    #can move in 8 directions one square
+    targets= [(1, 0), (1, 1), (1, -1), (-1, 0), (-1, 1), (-1, -1), (0, 1), (0, -1)]
+    for i in range(8):
+        target = (position[0] + targets[i][0], position[1] + targets[i][1])
+        if target not in friends_list and 0<= target[0] <=7 and 0 <= target[1] <=7:
+            moves_list.append(target)
+    return moves_list
 
 #check queen
 def check_queen(position, color):
@@ -301,6 +307,16 @@ def draw_valid(moves):
         pygame.draw.circle(screen, color, (moves[i][0] * 100 + 50, moves[i][1] * 100 + 50), 5)
 
 #draw captured pieces on side of screen
+def draw_captured():
+    for i in range(len(captured_white)):
+        captured_piece= captured_white[i]
+        index = piece_list.index(captured_piece)
+        screen.blit(small_black_images[index], (825, 5 + 50 * i))
+    for i in range(len(captured_black)):
+        captured_piece= captured_black[i]
+        index = piece_list.index(captured_piece)
+        screen.blit(small_white_images[index], (925, 5 + 50 * i))
+    pass
 
 #main loop
 
@@ -313,6 +329,7 @@ while run:
     screen.fill('dark gray')
     draw_board()
     draw_pieces()
+    draw_captured()
     if selection != 100:
         valid_moves = check_valid_moves()
         draw_valid(valid_moves)
