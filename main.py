@@ -134,8 +134,8 @@ def check_options(pieces, locations, turn):
             moves_list = check_rook(location, turn)
         elif piece == 'knight':
             moves_list = check_knight(location, turn)
-        # elif piece == 'bishop':
-        #     moves_list = check_bishop(location, turn)
+        elif piece == 'bishop':
+            moves_list = check_bishop(location, turn)
         # elif piece == 'king':
         #     moves_list = check_king(location, turn)
         # elif piece == 'queen':
@@ -234,6 +234,32 @@ def check_bishop(position, color):
     else:
         enemies_list = white_locations
         friends_list = black_locations
+
+    for i in range(4): #up right, up left, down right, down left
+        path = True
+        chain = 1
+        if i == 0:
+            x = 1
+            y = 1
+        elif i == 1:
+            x = -1
+            y = -1
+        elif i == 2:
+            x = 1
+            y = -1
+        else:
+            x = -1
+            y = 1
+        while path: 
+          if (position[0] + (chain * x), position[1] + (chain * y)) not in friends_list and \
+                    0 <= position[0] + (chain * x) <= 7 and 0 <= position[1] + (chain * y) <= 7:
+                moves_list.append((position[0] + (chain * x), position[1] + (chain * y)))
+                if (position[0] + (chain * x), position[1] + (chain * y)) in enemies_list:
+                    path = False
+                chain += 1
+          else:
+            path = False
+
     return moves_list
 
 #check king
