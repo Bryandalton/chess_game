@@ -138,8 +138,8 @@ def check_options(pieces, locations, turn):
             moves_list = check_bishop(location, turn)
         # elif piece == 'king':
         #     moves_list = check_king(location, turn)
-        # elif piece == 'queen':
-        #     moves_list = check_queen(location, turn)
+        elif piece == 'queen':
+            moves_list = check_queen(location, turn)
         all_moves_list.append(moves_list)
     return all_moves_list
 
@@ -275,14 +275,12 @@ def check_king(position, color):
 
 #check queen
 def check_queen(position, color):
-    moves_list = []
-    if color == 'white':
-        enemies_list = black_locations
-        friends_list = white_locations
-    else:
-        enemies_list = white_locations
-        friends_list = black_locations
-    pass
+    moves_list = check_bishop(position, color)
+    second_list = check_rook(position, color)
+    for i in range(len(second_list)):
+        moves_list.append(second_list[i])
+
+    return moves_list
 
 #draw valid move for just selected piece
 def check_valid_moves():
