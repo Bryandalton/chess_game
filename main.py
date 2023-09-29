@@ -406,8 +406,8 @@ while run:
                     winner = 'black'
                 if click_coords or piece_select in white_locations:
                     print(piece_select)
-                    selection= white_locations.index(int(piece_select))
-                    print(f'piece selected: {selection}')
+                    # selection= white_pieces[int(piece_select)]
+                    # print(f'piece selected: {selection}')
                     if turn_step == 0:
                         turn_step = 1
                 if click_coords in valid_moves and selection != 100:
