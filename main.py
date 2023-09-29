@@ -1,7 +1,11 @@
 #create chess game
 #have moves return chess notation
 #use chat gpt to play opponent
-import pygame
+#use argv[1:] or input to select and movie chess piece
+#option: convert grid to chess notation
+#print player moves in a way that they can be added to the prompt
+#draw grid notation on board
+import sys, pygame
 #setup
 pygame.init()
 
@@ -13,7 +17,6 @@ med_font = pygame.font.Font('freesansbold.ttf', 40)
 big_font = pygame.font.Font('freesansbold.ttf', 50)
 timer = pygame.time.Clock()
 fps= 60
-
 #game variables and images
 white_pieces = ['rook','knight','bishop', 'king', 'queen', 'bishop','knight', 'rook',
                'pawn','pawn','pawn','pawn','pawn','pawn','pawn','pawn']
@@ -102,6 +105,28 @@ def draw_board():
             pygame.draw.line(screen, 'black',(0, 100 * i),(800, 100 * i), 2)
             pygame.draw.line(screen, 'black',(100 * i, 0),(100 * i, 800), 2)
         screen.blit(med_font.render('Forfeit', True, 'black'), (830, 830))
+
+        #notation x axis
+        screen.blit(font.render('H', True, 'black'), (10, 10))
+        screen.blit(font.render('G', True, 'black'), (110, 10))
+        screen.blit(font.render('F', True, 'black'), (210, 10))
+        screen.blit(font.render('E', True, 'black'), (310, 10))
+        screen.blit(font.render('D', True, 'black'), (410, 10))
+        screen.blit(font.render('C', True, 'black'), (510, 10))
+        screen.blit(font.render('B', True, 'black'), (610, 10))
+        screen.blit(font.render('A', True, 'black'), (710, 10))
+
+        #notation y axis
+        screen.blit(font.render('1', True, 'black'), (10,50))
+        screen.blit(font.render('2', True, 'black'), (10,150))
+        screen.blit(font.render('3', True, 'black'), (10,250))
+        screen.blit(font.render('4', True, 'black'), (10,350))
+        screen.blit(font.render('5', True, 'black'), (10,450))
+        screen.blit(font.render('6', True, 'black'), (10,550))
+        screen.blit(font.render('7', True, 'black'), (10,650))
+        screen.blit(font.render('8', True, 'black'), (10,750))
+
+
 
 #draw pieces on board
 def draw_pieces():
@@ -215,10 +240,8 @@ def check_pawn(position, color):
 def check_knight(position, color):
     moves_list = []
     if color == 'white':
-        enemies_list = black_locations
         friends_list = white_locations
     else:
-        enemies_list = white_locations
         friends_list = black_locations
     #8 squares to check for knight two squares in one direction and one in another
     targets= [(1, 2), (1, -2), (2, 1), (2, -1), (-1, 2), (-1, -2), (-2, 1), (-2, -1)]
@@ -270,10 +293,8 @@ def check_bishop(position, color):
 def check_king(position, color):
     moves_list = []
     if color == 'white':
-        enemies_list = black_locations
         friends_list = white_locations
     else:
-        enemies_list = white_locations
         friends_list = black_locations
     #can move in 8 directions one square
     targets= [(1, 0), (1, 1), (1, -1), (-1, 0), (-1, 1), (-1, -1), (0, 1), (0, -1)]
@@ -377,11 +398,16 @@ while run:
             x_coord = event.pos[0] // 100
             y_coord = event.pos[1] // 100
             click_coords = (x_coord, y_coord)
+            print(f'clicked coords: {click_coords}')
             if turn_step <= 1:
+                piece_select= input('Select a piece: ')
+                # move = input('Make a move: ')
                 if click_coords == (8, 8) or click_coords == (9, 8):
                     winner = 'black'
-                if click_coords in white_locations:
-                    selection= white_locations.index(click_coords)
+                if click_coords or piece_select in white_locations:
+                    print(piece_select)
+                    selection= white_locations.index(int(piece_select))
+                    print(f'piece selected: {selection}')
                     if turn_step == 0:
                         turn_step = 1
                 if click_coords in valid_moves and selection != 100:
